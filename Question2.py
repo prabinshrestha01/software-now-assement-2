@@ -1,12 +1,23 @@
+import argparse
 import csv
 from pathlib import Path
 from statistics import mean, stdev
 
 def main():
-    # Define the folder containing the temperature data
-    folder_path = Path(__file__).parent / "temperatures"
-    
+    # Allow an optional path to the folder containing the temperature data
+    parser = argparse.ArgumentParser(description="Analyze temperature CSV files.")
+    parser.add_argument('data_dir', nargs='?', default=None, help='Path to temperatures folder')
+    args = parser.parse_args()
+
+    if args.data_dir:
+        folder_path = Path(args.data_dir).expanduser()
+    else:
+        folder_path = Path(__file__).parent / "temperatures"
+
+    # Path(__file__).parent tells Python: "Look at the folder where this script is currently saved."
+    # "temperatures" tells Python: "Now look for a folder named 'temperatures' right here."
     # Check if the folder exists
+
     if not folder_path.exists():
         print(f"Error: The folder '{folder_path}' does not exist.")
         print("Please create the folder and place the .csv files inside it.")
@@ -59,9 +70,9 @@ def main():
         print("No valid data found to process.")
         return
 
-    # ==========================================
+    
     # Task 1: Seasonal Average
-    # ==========================================
+
     # Define season mapping
     season_map = {
         'December': 'Summer', 'January': 'Summer', 'February': 'Summer',
@@ -93,9 +104,9 @@ def main():
     
     print("Generated: average_temp.txt")
 
-    # ==========================================
+
     # Task 2: Temperature Range
-    # ==========================================
+
     # Group by station and calculate global max and min
     station_range = {}
     for record in all_data:
@@ -123,10 +134,12 @@ def main():
             
     print("Generated: largest_temp_range_station.txt")
 
-    # ==========================================
+
+    
     # Task 3: Temperature Stability
-    # ==========================================
+  
     # Calculate standard deviation per station
+ 
     station_temps = {}
     for record in all_data:
         station = record['STATION_NAME']
