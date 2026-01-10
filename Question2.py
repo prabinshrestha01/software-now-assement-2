@@ -73,7 +73,7 @@ def load_temperature_data(folder_path: Path) -> List[Dict[str, Any]]:
                                     'Season': SEASON_MAP.get(month, 'Unknown')
                                 })
                             except ValueError:
-                                # Ignore non-numeric values (NaN/corrupt data)
+                                # Ignore non-numeric values (NaN/corrupt data) as well
                                 pass
         except Exception as e:
             print(f"Error processing file {file_path.name}: {e}")
