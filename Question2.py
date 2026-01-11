@@ -19,8 +19,8 @@ SEASON_MAP = {
 }
 
 def load_temperature_data(folder_path: Path) -> List[Dict[str, Any]]:
-    """
-    Reads and aggregates temperature data from all CSV files in a specified directory.
+    
+    """ It reads and aggregates temperature data from all CSV files in a specified directory.
 
     Iterates through every .csv file in the target folder, parsing valid temperature
     readings while ignoring missing or malformed values.
@@ -34,8 +34,8 @@ def load_temperature_data(folder_path: Path) -> List[Dict[str, Any]]:
             - 'STATION_NAME' (str): The name of the weather station.
             - 'Month' (str): The month of the recording.
             - 'Temperature' (float): The recorded temperature value.
-            - 'Season' (str): The Australian season corresponding to the month.
-    """
+            - 'Season' (str): The Australian season corresponding to the month.  """
+
     all_records = []
     csv_files = sorted(folder_path.glob("*.csv"))
 
@@ -51,7 +51,7 @@ def load_temperature_data(folder_path: Path) -> List[Dict[str, Any]]:
                 reader = csv.DictReader(f)
                 headers = reader.fieldnames
                 
-                # Identify which month columns exist in this specific CSV
+                # To identify which month columns exist in this specific CSV
                 available_months = [col for col in MONTH_COLUMNS if col in headers]
 
                 if not available_months:
@@ -62,7 +62,7 @@ def load_temperature_data(folder_path: Path) -> List[Dict[str, Any]]:
                     
                     for month in available_months:
                         temp_str = row.get(month, '')
-                        # Parse temperature if valid number
+                        # To parse temperature if valid number
                         if temp_str and temp_str.strip():
                             try:
                                 temp_val = float(temp_str)
@@ -73,7 +73,7 @@ def load_temperature_data(folder_path: Path) -> List[Dict[str, Any]]:
                                     'Season': SEASON_MAP.get(month, 'Unknown')
                                 })
                             except ValueError:
-                                # Ignore non-numeric values (NaN/corrupt data) as well
+                                # To ignore non-numeric values (NaN/corrupt data)
                                 pass
         except Exception as e:
             print(f"Error processing file {file_path.name}: {e}")
@@ -81,29 +81,29 @@ def load_temperature_data(folder_path: Path) -> List[Dict[str, Any]]:
     return all_records
 
 def calculate_seasonal_averages(data: List[Dict[str, Any]], output_file: str) -> None:
-    """
-    Calculates the mean temperature for each season and writes the result to a file.
+    
+    """ Calculates the mean temperature for each season and writes the result to a file.
 
     Aggregates data across all stations and years to determine a global average 
     for Summer, Autumn, Winter, and Spring.
 
     Args:
         data (List[Dict[str, Any]]): The loaded temperature data records.
-        output_file (str): The filename to write the results to.
-    """
+        output_file (str): The filename to write the results to. """
+    
     seasonal_temps = {}
     
-    # Group temperatures by season
+    # For grouping temperatures by season
     for record in data:
         season = record['Season']
         if season not in seasonal_temps:
             seasonal_temps[season] = []
         seasonal_temps[season].append(record['Temperature'])
 
-    # Calculate means
+    # For calculating means
     seasonal_means = {s: mean(temps) for s, temps in seasonal_temps.items()}
 
-    # Write to file in standard order
+    # To write to file in standard order
     try:
         with open(output_file, "w", encoding='utf-8') as f:
             for season in ['Summer', 'Autumn', 'Winter', 'Spring']:
@@ -114,16 +114,16 @@ def calculate_seasonal_averages(data: List[Dict[str, Any]], output_file: str) ->
         print(f"Error writing to {output_file}: {e}")
 
 def find_largest_temperature_range(data: List[Dict[str, Any]], output_file: str) -> None:
-    """
-    Identifies station(s) with the maximum temperature range and writes the result to a file.
+    
+    """    Identifies station(s) with the maximum temperature range and writes the result to a file.
 
     The range is defined as the difference between the absolute maximum and absolute minimum 
     temperature recorded at a specific station.
 
     Args:
         data (List[Dict[str, Any]]): The loaded temperature data records.
-        output_file (str): The filename to write the results to.
-    """
+        output_file (str): The filename to write the results to.    """
+    
     # map: station_name -> {'min': float, 'max': float}
     station_extremes = {}
 
@@ -139,7 +139,7 @@ def find_largest_temperature_range(data: List[Dict[str, Any]], output_file: str)
             if temp > station_extremes[station]['max']:
                 station_extremes[station]['max'] = temp
 
-    # Calculate ranges
+    # To calculate ranges
     results = []
     max_range_val = -1.0
 
@@ -155,7 +155,7 @@ def find_largest_temperature_range(data: List[Dict[str, Any]], output_file: str)
             'min': stats['min']
         })
 
-    # Filter for the ties
+    # Removeing all stations that do not match max range (to handle ties)
     top_stations = [r for r in results if abs(r['range'] - max_range_val) < 0.001]
 
     try:
@@ -168,17 +168,17 @@ def find_largest_temperature_range(data: List[Dict[str, Any]], output_file: str)
         print(f"Error writing to {output_file}: {e}")
 
 def analyze_temperature_stability(data: List[Dict[str, Any]], output_file: str) -> None:
-    """
-    Analyzes temperature stability using standard deviation and writes the result to a file.
+    
+    """     Analyzes temperature stability using standard deviation and writes the result to a file.
 
     Identifies the most stable (lowest std dev) and most variable (highest std dev) 
     stations. Requires at least two data points per station to calculate deviation.
 
     Args:
         data (List[Dict[str, Any]]): The loaded temperature data records.
-        output_file (str): The filename to write the results to.
-    """
-    # Group temperatures by station
+        output_file (str): The filename to write the results to.    """
+    
+    # Grouping temperatures by station
     station_temps = {}
     for record in data:
         station = record['STATION_NAME']
@@ -186,7 +186,7 @@ def analyze_temperature_stability(data: List[Dict[str, Any]], output_file: str) 
             station_temps[station] = []
         station_temps[station].append(record['Temperature'])
 
-    # Calculate Standard Deviations
+    # To calculate Standard Deviations
     station_stds = {}
     for station, temps in station_temps.items():
         if len(temps) > 1:
@@ -199,7 +199,7 @@ def analyze_temperature_stability(data: List[Dict[str, Any]], output_file: str) 
     min_std = min(station_stds.values())
     max_std = max(station_stds.values())
 
-    # Find ties for most stable and most variable
+    # To find the most stable and most variable stations
     most_stable = [s for s, v in station_stds.items() if abs(v - min_std) < 0.001]
     most_variable = [s for s, v in station_stds.items() if abs(v - max_std) < 0.001]
 
@@ -214,37 +214,38 @@ def analyze_temperature_stability(data: List[Dict[str, Any]], output_file: str) 
         print(f"Error writing to {output_file}: {e}")
 
 def main() -> None:
-    """
-    Main entry point for the Weather Analysis Application.
+    
+    """     Main entry point for the Weather Analysis Application.
 
     Parses command-line arguments to locate the data directory, validates the input,
-    and orchestrates the data loading and analysis tasks.
-    """
+    and orchestrates the data loading and analysis tasks.    """
+      
+        # Argument Parsing
     parser = argparse.ArgumentParser(description="Analyze Australian weather station data.")
     parser.add_argument('data_dir', nargs='?', default=None, 
                         help='Path to the folder containing "temperatures" CSV files.')
     args = parser.parse_args()
 
-    # Determine folder path
+    # Determining folder's path
     if args.data_dir:
         folder_path = Path(args.data_dir).expanduser()
     else:
         folder_path = Path(__file__).parent / "temperatures"
 
-    # Validate folder
+    # Validate folder existence
     if not folder_path.exists():
         print(f"Error: The folder '{folder_path}' does not exist.")
         print("Please ensure a 'temperatures' folder exists in the script directory or provide a path.")
         sys.exit(1)
 
-    # Execute Logic
+    # Executing Logic
     data = load_temperature_data(folder_path)
 
     if not data:
         print("No valid temperature data found. Exiting.")
         sys.exit(1)
 
-    # Perform Tasks
+    # TO perform output tasks
     calculate_seasonal_averages(data, "average_temp.txt")
     find_largest_temperature_range(data, "largest_temp_range_station.txt")
     analyze_temperature_stability(data, "temperature_stability_stations.txt")
