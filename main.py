@@ -1,86 +1,126 @@
 import string
 
+
+def shift_char(c, shift, is_upper):
+    alphabet = string.ascii_uppercase if is_upper else string.ascii_lowercase
+    idx = alphabet.index(c)
+    new_idx = (idx + shift) % 26
+    return alphabet[new_idx]
+
+
 def encrypt_text(shift1, shift2):
-    with open("raw_text.txt", "r") as f:
+    # Open and read original text file
+    with open("raw_text.txt", "r", encoding="utf-8") as f:
         text = f.read()
 
     encrypted = ""
 
-    for char in text:
-        if char.islower():
-            if char in "abcdefghijklm":
+    # Loop through each character in the text
+    for ch in text:
+
+        # If lowercase letter
+        if ch.islower():
+            # a–m → shift forward by shift1*shift2
+            if 'a' <= ch <= 'm':
                 shift = shift1 * shift2
-                alphabet = string.ascii_lowercase
-                new_char = alphabet[(alphabet.index(char) + shift) % 26]
-            else:
-                shift = shift1 + shift2
-                alphabet = string.ascii_lowercase
-                new_char = alphabet[(alphabet.index(char) - shift) % 26]
-            encrypted += new_char
+                encrypted += shift_char(ch, shift, is_upper=False)
 
-        elif char.isupper():
-            if char in "ABCDEFGHIJKLM":
-                shift = shift1
-                alphabet = string.ascii_uppercase
-                new_char = alphabet[(alphabet.index(char) - shift) % 26]
+            # n–z → shift backward by shift1+shift2
+            elif 'n' <= ch <= 'z':
+                shift = -(shift1 + shift2)
+                encrypted += shift_char(ch, shift, is_upper=False)
+
             else:
+                encrypted += ch
+
+        # If uppercase letter
+        elif ch.isupper():
+            # A–M → shift backward by shift1
+            if 'A' <= ch <= 'M':
+                shift = -shift1
+                encrypted += shift_char(ch, shift, is_upper=True)
+
+            # N–Z → shift forward by shift2 squared
+            elif 'N' <= ch <= 'Z':
                 shift = shift2 ** 2
-                alphabet = string.ascii_uppercase
-                new_char = alphabet[(alphabet.index(char) + shift) % 26]
-            encrypted += new_char
+                encrypted += shift_char(ch, shift, is_upper=True)
 
+            else:
+                encrypted += ch
+
+        # Non-alphabet characters stay unchanged
         else:
-            encrypted += char
+            encrypted += ch
 
-    with open("encrypted_text.txt", "w") as f:
+    # Write encrypted text to file
+    with open("encrypted_text.txt", "w", encoding="utf-8") as f:
         f.write(encrypted)
 
+
 def decrypt_text(shift1, shift2):
-    with open("encrypted_text.txt", "r") as f:
+    # Read encrypted text file
+    with open("encrypted_text.txt", "r", encoding="utf-8") as f:
         text = f.read()
 
     decrypted = ""
 
-    for char in text:
-        if char.islower():
-            if char in "abcdefghijklm":
-                shift = shift1 * shift2
-                alphabet = string.ascii_lowercase
-                new_char = alphabet[(alphabet.index(char) - shift) % 26]
-            else:
-                shift = shift1 + shift2
-                alphabet = string.ascii_lowercase
-                new_char = alphabet[(alphabet.index(char) + shift) % 26]
-            decrypted += new_char
+    # Loop through encrypted characters
+    for ch in text:
 
-        elif char.isupper():
-            if char in "ABCDEFGHIJKLM":
+        # If lowercase letter
+        if ch.islower():
+            # Reverse of a–m rule
+            if 'a' <= ch <= 'm':
+                shift = -(shift1 * shift2)
+                decrypted += shift_char(ch, shift, is_upper=False)
+
+            # Reverse of n–z rule
+            elif 'n' <= ch <= 'z':
+                shift = (shift1 + shift2)
+                decrypted += shift_char(ch, shift, is_upper=False)
+
+            else:
+                decrypted += ch
+
+        # If uppercase letter
+        elif ch.isupper():
+            # Reverse of A–M rule
+            if 'A' <= ch <= 'M':
                 shift = shift1
-                alphabet = string.ascii_uppercase
-                new_char = alphabet[(alphabet.index(char) + shift) % 26]
+                decrypted += shift_char(ch, shift, is_upper=True)
+
+            # Reverse of N–Z rule
+            elif 'N' <= ch <= 'Z':
+                shift = -(shift2 ** 2)
+                decrypted += shift_char(ch, shift, is_upper=True)
+
             else:
-                shift = shift2 ** 2
-                alphabet = string.ascii_uppercase
-                new_char = alphabet[(alphabet.index(char) - shift) % 26]
-            decrypted += new_char
+                decrypted += ch
 
+        # Non-alphabet characters stay unchanged
         else:
-            decrypted += char
+            decrypted += ch
 
-    with open("decrypted_text.txt", "w") as f:
+    # Write decrypted text to file
+    with open("decrypted_text.txt", "w", encoding="utf-8") as f:
         f.write(decrypted)
 
-def verify_decryption():
-    with open("raw_text.txt", "r") as f1, open("decrypted_text.txt", "r") as f2:
-        if f1.read() == f2.read():
-            print("Decryption successful: files match ✔️")
-        else:
-            print("Decryption failed: files do NOT match ❌")
 
-# -------- MAIN PROGRAM --------
-shift1 = int(input("Enter shift1: "))
-shift2 = int(input("Enter shift2: "))
+def verify():
+    with open("raw_text.txt", "r", encoding="utf-8") as f1, open("decrypted_text.txt", "r", encoding="utf-8") as f2:
+        return f1.read() == f2.read()
 
-encrypt_text(shift1, shift2)
-decrypt_text(shift1, shift2)
-verify_decryption()
+
+# Main program
+if __name__ == "__main__":
+    shift1 = int(input("Enter shift1: "))
+    shift2 = int(input("Enter shift2: "))
+
+    encrypt_text(shift1, shift2)
+    decrypt_text(shift1, shift2)
+
+    if verify():
+        print("Decryption successful ✔")
+    else:
+        print("Decryption failed ✖")
+ 
