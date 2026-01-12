@@ -28,11 +28,23 @@ def main():
     
     # User Input Parameters
     try:
-        sides = int(input("Enter the number of sides: "))
-        length = int(input("Enter the side length: "))
-        depth = int(input("Enter the recursion depth: "))
+        sides = int(input("Enter the number of sides (3-7): "))
+        if not (3 <= sides <= 7):
+            print("Error: Sides must be between 3 and 7.")
+            return
+
+        length = int(input("Enter the side length in px (50-500): "))
+        if not (50 <= length <= 500):
+            print("Error: Length must be between 50 and 500.")
+            return
+
+        depth = int(input("Enter the recursion depth (3-9): "))
+        if not (3 <= depth <= 9):
+            print("Error: Depth must be between 3 and 9.")
+            return
+            
     except ValueError:
-        print("Error: Please enter valid numbers.")
+        print("Error: Please enter valid integers.")
         return
 
     # Screen Setup
@@ -40,11 +52,12 @@ def main():
     screen.title("Question 3: Recursive Indentation Pattern")
     screen.bgcolor("white")
     
+    #creates pen and it tells how to draw instantly.
     t = turtle.Turtle()
     t.speed(0)
     t.pensize(2)
     
-    # Center the drawing
+    # make the drawing in the centre of the screen
     t.penup()
     t.goto(-length / 2, length / 2)
     t.pendown()
