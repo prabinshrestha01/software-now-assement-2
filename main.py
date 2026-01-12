@@ -1,6 +1,11 @@
 # Double-shift encryption 
 
 def encrypt_text(text, shift1, shift2):
+    """
+    
+    Encrypts the given text using the double-shift rules.
+    Returns the encrypted text and a list of shifts applied for each character.
+    """
     encrypted = ""
     shifts = []
     for c in text:
