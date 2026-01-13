@@ -1,12 +1,11 @@
-<<<<<<< HEAD
 import argparse
 import csv
 import sys
 from pathlib import Path
 from statistics import mean, stdev
-from typing import List, Dict, Any, Tuple, Optional
 
-# Constants for file processing
+
+#    Constants for file processing
 MONTH_COLUMNS = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -19,7 +18,7 @@ SEASON_MAP = {
     'September': 'Spring', 'October': 'Spring', 'November': 'Spring'
 }
 
-def load_temperature_data(folder_path: Path) -> List[Dict[str, Any]]:
+def load_temperature_data(folder_path: Path):
     
     """ It reads and aggregates temperature data from all CSV files in a specified directory.
 
