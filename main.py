@@ -1,86 +1,53 @@
-import string
+# Double-shift encryption 
 
-def encrypt_text(shift1, shift2):
-    with open("raw_text.txt", "r") as f:
-        text = f.read()
-
+def encrypt_text(text, shift1, shift2):
+    """
+    
+    Encrypts the given text using the double-shift rules.
+    Returns the encrypted text and a list of shifts applied for each character.
+    """
     encrypted = ""
-
-    for char in text:
-        if char.islower():
-            if char in "abcdefghijklm":
-                shift = shift1 * shift2
-                alphabet = string.ascii_lowercase
-                new_char = alphabet[(alphabet.index(char) + shift) % 26]
-            else:
-                shift = shift1 + shift2
-                alphabet = string.ascii_lowercase
-                new_char = alphabet[(alphabet.index(char) - shift) % 26]
-            encrypted += new_char
-
-        elif char.isupper():
-            if char in "ABCDEFGHIJKLM":
-                shift = shift1
-                alphabet = string.ascii_uppercase
-                new_char = alphabet[(alphabet.index(char) - shift) % 26]
-            else:
-                shift = shift2 ** 2
-                alphabet = string.ascii_uppercase
-                new_char = alphabet[(alphabet.index(char) + shift) % 26]
-            encrypted += new_char
-
+    shifts = []
+    for c in text:
+        if c.islower():
+            s = shift1*shift2 if 'a' <= c <= 'm' else -(shift1+shift2)
+        elif c.isupper():
+            s = -shift1 if 'A' <= c <= 'M' else shift2**2
         else:
-            encrypted += char
+            s = 0
+        encrypted += chr((ord(c) + s) % 256)
+        shifts.append(s)
+    return encrypted, shifts
 
-    with open("encrypted_text.txt", "w") as f:
-        f.write(encrypted)
-
-def decrypt_text(shift1, shift2):
-    with open("encrypted_text.txt", "r") as f:
-        text = f.read()
-
+def decrypt_text(encrypted, shifts):
     decrypted = ""
+    for c, s in zip(encrypted, shifts):
+        decrypted += chr((ord(c) - s) % 256)
+    return decrypted
 
-    for char in text:
-        if char.islower():
-            if char in "abcdefghijklm":
-                shift = shift1 * shift2
-                alphabet = string.ascii_lowercase
-                new_char = alphabet[(alphabet.index(char) - shift) % 26]
-            else:
-                shift = shift1 + shift2
-                alphabet = string.ascii_lowercase
-                new_char = alphabet[(alphabet.index(char) + shift) % 26]
-            decrypted += new_char
+def main():
+    shift1 = int(input("Enter shift1: "))
+    shift2 = int(input("Enter shift2: "))
 
-        elif char.isupper():
-            if char in "ABCDEFGHIJKLM":
-                shift = shift1
-                alphabet = string.ascii_uppercase
-                new_char = alphabet[(alphabet.index(char) + shift) % 26]
-            else:
-                shift = shift2 ** 2
-                alphabet = string.ascii_uppercase
-                new_char = alphabet[(alphabet.index(char) - shift) % 26]
-            decrypted += new_char
+    # Read original file
+    with open("raw_text.txt", "r", encoding="utf-8") as f:
+        raw = f.read()
 
-        else:
-            decrypted += char
+    # Encrypt
+    encrypted, shifts = encrypt_text(raw, shift1, shift2)
+    with open("encrypted_text.txt", "w", encoding="utf-8") as f:
+        f.write(encrypted)
+    print("Encryption done ✔")
 
-    with open("decrypted_text.txt", "w") as f:
+    # Decrypt
+    decrypted = decrypt_text(encrypted, shifts)
+    with open("decrypted_text.txt", "w", encoding="utf-8") as f:
         f.write(decrypted)
+    print("Decryption done ✔")
 
-def verify_decryption():
-    with open("raw_text.txt", "r") as f1, open("decrypted_text.txt", "r") as f2:
-        if f1.read() == f2.read():
-            print("Decryption successful: files match ✔️")
-        else:
-            print("Decryption failed: files do NOT match ❌")
+    # Verify
+    print("Decryption successful ✔" if raw == decrypted else "Decryption failed ✖")
 
-# -------- MAIN PROGRAM --------
-shift1 = int(input("Enter shift1: "))
-shift2 = int(input("Enter shift2: "))
+if __name__ == "__main__":
+    main()
 
-encrypt_text(shift1, shift2)
-decrypt_text(shift1, shift2)
-verify_decryption()
