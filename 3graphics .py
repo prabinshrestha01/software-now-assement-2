@@ -88,7 +88,7 @@ def main():
         draw_recursive_edge(t, length, depth)
         t.right(exterior_angle)
 
-        #this doesnot end the allow screen to exit automatically
+        #this doesnot allow screen to exit automatically
     print("Pattern complete. Click the window to close.")
     screen.exitonclick()
 if __name__ == "__main__":
