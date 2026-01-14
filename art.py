@@ -67,12 +67,13 @@ def main():
     # Screen Setup
     screen = turtle.Screen()
     screen.title("Recursive Indentation Pattern")
-    screen.bgcolor("white")
+    screen.bgcolor("black")
     
-    #creates pen and it tells how to draw instantly.
+    #creates pen and it tells how to draw instantly and what color.
     t = turtle.Turtle()
     t.speed(0)
     t.pensize(2)
+    t.color("white")
     
     # make the drawing in the centre of the screen
     t.penup()
