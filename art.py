@@ -3,9 +3,9 @@ import turtle
 this function divides a straight line into segments to create 
 an indentation that is inward and trangular.
 
-t(turtle.Turtle) is the object of turtle which is used for drawing
-length(float) is the length of the current segment
-depth(int) is the current level of the recursion, where depth of 0
+-t(turtle.Turtle) is the object of turtle which is used for drawing
+-length(float) is the length of the current segment
+-depth(int) is the current level of the recursion, where depth of 0
 draws a straight line
 
 """
@@ -37,10 +37,10 @@ def main():
     """
     the execution of main program.
     Here the function handles:
-    input from the user for sides length and recursion depth.
-    make sure the values are within the ranges.
-    screen setup and positioning
-    the main drawing
+    -input from the user for sides length and recursion depth.
+    -make sure the values are within the ranges.
+    -screen setup and positioning
+    -the main drawing
     """
     
     # Asks the input from the users
@@ -73,7 +73,7 @@ def main():
     t = turtle.Turtle()
     t.speed(0)
     t.pensize(2)
-    t.color("white")
+    t.color("cyan")
     
     # make the drawing in the centre of the screen
     t.penup()
