@@ -34,7 +34,14 @@ def draw_recursive_edge(t, length, depth):
         draw_recursive_edge(t, segment_length, depth - 1)
 
 def main():
-    
+    """
+    the execution of main program.
+    Here the function handles:
+    input from the user for sides length and recursion depth.
+    make sure the values are within the ranges.
+    screen setup and positioning
+    the main drawing
+    """
     
     # Asks the input from the users
     try:
