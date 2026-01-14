@@ -1,6 +1,16 @@
 import turtle
+"""
+this function divides a straight line into segments to create 
+an indentation that is inward and trangular.
 
+t(turtle.Turtle) is the object of turtle which is used for drawing
+length(float) is the length of the current segment
+depth(int) is the current level of the recursion, where depth of 0
+draws a straight line
+
+"""
 def draw_recursive_edge(t, length, depth):
+
     if depth == 0:
         # Depth 0: It Draws a straight line
         t.forward(length)
@@ -26,7 +36,7 @@ def draw_recursive_edge(t, length, depth):
 def main():
     
     
-    # Asks the input for the users
+    # Asks the input from the users
     try:
         sides = int(input("Enter the number of sides (3-7): "))
         if not (3 <= sides <= 7):
@@ -65,7 +75,7 @@ def main():
     # it Calculates external angle for polygon
     exterior_angle = 360 / sides
     
-    # Draw the Polygon
+    # Draws the Polygon
     for _ in range(sides):
         draw_recursive_edge(t, length, depth)
         t.right(exterior_angle)
